@@ -1,5 +1,8 @@
 package calc;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Calculator {
 
 	public static int add(String str)
@@ -7,9 +10,11 @@ public class Calculator {
 		if(str.isEmpty())
 			return 0;
 		
-		else if(str.contains(","))
+			
+		
+		else
 		{
-			String[] nums = str.split(",|\n");
+			String[] nums = tokenize(str);
 			int l = nums.length;
 			int[] numbers = new int[l];
 			
@@ -22,14 +27,35 @@ public class Calculator {
 			}
 			
 			return sum;
-			
-			
-			
-		}		
+		}
+	}
+	
+	private static String[] tokenize(String str)
+	{
+		if(usesCustomDelimeter(str))
+			return splitCustomDelimeter(str);
 		
 		else
-		{
-			return Integer.parseInt(str);
-		}
+			return splitNewlineAndCommas(str);
+	}
+	
+	private static boolean usesCustomDelimeter(String str)
+	{
+		return str.startsWith("//");
+	}
+	
+	private static String[] splitNewlineAndCommas(String str)
+	{
+		String[] nums = str.split(",|\n");
+		return nums;
+	}
+	
+	private static String[] splitCustomDelimeter(String str)
+	{
+		Matcher m = Pattern.compile("//(.)\n(.*)").matcher(str);
+		m.matches();
+		String delimeter = m.group(1);
+		String nums = m.group(2);
+		return nums.split(delimeter);
 	}
 }
