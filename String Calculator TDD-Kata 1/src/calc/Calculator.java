@@ -23,6 +23,8 @@ public class Calculator {
 			for(int i = 0; i<l; i++)
 			{
 				numbers[i] = Integer.parseInt(nums[i]);
+				if(numbers[i] < 0)
+					throw new RuntimeException("Negatives not allowed: " + numbers[i]);
 				sum += numbers[i];
 			}
 			
