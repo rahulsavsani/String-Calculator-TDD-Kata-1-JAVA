@@ -1,5 +1,6 @@
 package calc;
 
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,7 @@ public class Calculator {
 			String[] nums = tokenize(str);
 			int l = nums.length;
 			int[] numbers = new int[l];
+			Vector negatives = new Vector();
 			
 			int sum = 0;
 			
@@ -24,9 +26,14 @@ public class Calculator {
 			{
 				numbers[i] = Integer.parseInt(nums[i]);
 				if(numbers[i] < 0)
-					throw new RuntimeException("Negatives not allowed: " + numbers[i]);
+					negatives.add(numbers[i]);
+//					throw new RuntimeException("Negatives not allowed: " + numbers[i]);
+				
 				sum += numbers[i];
 			}
+			
+			if(negatives.size() > 0)
+				throw new RuntimeException("Negatives not allowed: " + negatives);
 			
 			return sum;
 		}
