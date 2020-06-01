@@ -6,11 +6,15 @@ import java.util.regex.Pattern;
 
 public class Calculator {
 
-	public static int count = 0;
+	static int count = 0;
 	
-	public static int add(String str)
+	public int add(String str)
 	{
-		count++;
+		synchronized(this)
+		{
+			count++;
+		}
+		
 		if(str.isEmpty())
 			return 0;
 		
@@ -22,7 +26,6 @@ public class Calculator {
 			Vector<Integer> numbers = new Vector<>();
 			String q = "";
 			int e =0;
-			int neg =0;
 			int sum = 0;
 			
 			for(int i =0; i<l; i++)
@@ -64,7 +67,7 @@ public class Calculator {
 		if(str.startsWith("//"))
 		{
 			if(str.startsWith("//["))
-				return splitCustomDelWithAnyLength(str);
+				return splitMulCustomDelWithAnyLength(str);
 			else
 				return splitCustomDelimeter(str);	
 		}
@@ -91,12 +94,41 @@ public class Calculator {
 		return nums.split(delimeter);
 	}
 	
-	private static String[] splitCustomDelWithAnyLength(String str)
+	/*private static String[] splitCustomDelWithAnyLength(String str)
 	{
 		Matcher m = Pattern.compile("//(\\[.+\\])\n(.*)").matcher(str);
 		m.matches();
 		String delimeter = m.group(1);
 		String nums = m.group(2);
 		return nums.split(delimeter);
+	}
+	*/
+	
+	private static String[] splitMulCustomDelWithAnyLength(String str)
+	{
+		Matcher m = Pattern.compile("//(\\[.+\\])+\n(.*)").matcher(str);
+		m.matches();
+		String del = m.group(1);
+		String delimeters = new String();
+		
+		int l = del.length(),last =0;
+		for(int i =0; i<l ; i++)
+		{
+			if(del.charAt(i) == ']' && i != l-1)
+			{	
+				delimeters += del.substring(last,i);
+				delimeters += "]|";
+				last = i+1;
+				
+			}
+			
+			else if(i == l-1)
+				delimeters += del.substring(last,i) + "]";
+		}
+		String nums = m.group(2);
+		
+		return nums.split(delimeters); 
+		
+		
 	}
 }
