@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 class CalculatorTest {
+	
 
 	@Test
 	public void returnZeroOnEmptyString()
@@ -54,5 +55,23 @@ class CalculatorTest {
 		{
 			assertEquals("Negatives not allowed: [-1, -2]", e.getMessage());
 		}
+	}
+	
+	@Test
+	public void validateCallCount()
+	{
+		assertEquals(Calculator.getCallCount(), Calculator.count);
+	}
+	
+	@Test
+	public void ignoreNumsGrtThn1000()
+	{
+		assertEquals(2, Calculator.add("2,1001"));
+	}
+	
+	@Test
+	public void validateAnyLengthDelimeter()
+	{
+		assertEquals(6, Calculator.add("//[***]\n1***2***3"));
 	}
 }

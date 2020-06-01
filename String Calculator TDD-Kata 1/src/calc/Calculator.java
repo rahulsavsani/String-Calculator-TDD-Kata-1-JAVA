@@ -6,30 +6,44 @@ import java.util.regex.Pattern;
 
 public class Calculator {
 
+	public static int count = 0;
+	
 	public static int add(String str)
 	{
+		count++;
 		if(str.isEmpty())
 			return 0;
-		
-			
 		
 		else
 		{
 			String[] nums = tokenize(str);
 			int l = nums.length;
-			int[] numbers = new int[l];
-			Vector negatives = new Vector();
-			
+			Vector<Integer> negatives = new Vector<>();
+			Vector<Integer> numbers = new Vector<>();
+			String q = "";
+			int e =0;
+			int neg =0;
 			int sum = 0;
 			
-			for(int i = 0; i<l; i++)
+			for(int i =0; i<l; i++)
 			{
-				numbers[i] = Integer.parseInt(nums[i]);
-				if(numbers[i] < 0)
-					negatives.add(numbers[i]);
-//					throw new RuntimeException("Negatives not allowed: " + numbers[i]);
-				
-				sum += numbers[i];
+			
+					Matcher mx = Pattern.compile("^(\\+|-)?\\d+$").matcher(nums[i]);
+					while(mx.find())
+					{	
+						q = mx.group();
+						e = Integer.parseInt(q);
+						
+						if(e<0)
+						{
+							negatives.add(e);
+						}
+						if(e>1000)
+							e=0;
+							
+						numbers.add(e);
+						sum +=e;
+					 }
 			}
 			
 			if(negatives.size() > 0)
@@ -39,20 +53,29 @@ public class Calculator {
 		}
 	}
 	
+	public static int getCallCount()
+	{
+		return count;
+	}
+	
 	private static String[] tokenize(String str)
 	{
-		if(usesCustomDelimeter(str))
-			return splitCustomDelimeter(str);
+
+		if(str.startsWith("//"))
+		{
+			if(str.startsWith("//["))
+				return splitCustomDelWithAnyLength(str);
+			else
+				return splitCustomDelimeter(str);	
+		}
 		
-		else
-			return splitNewlineAndCommas(str);
+			else
+			{
+				return splitNewlineAndCommas(str);	
+			}
 	}
 	
-	private static boolean usesCustomDelimeter(String str)
-	{
-		return str.startsWith("//");
-	}
-	
+
 	private static String[] splitNewlineAndCommas(String str)
 	{
 		String[] nums = str.split(",|\n");
@@ -62,6 +85,15 @@ public class Calculator {
 	private static String[] splitCustomDelimeter(String str)
 	{
 		Matcher m = Pattern.compile("//(.)\n(.*)").matcher(str);
+		m.matches();
+		String delimeter = m.group(1);
+		String nums = m.group(2);
+		return nums.split(delimeter);
+	}
+	
+	private static String[] splitCustomDelWithAnyLength(String str)
+	{
+		Matcher m = Pattern.compile("//(\\[.+\\])\n(.*)").matcher(str);
 		m.matches();
 		String delimeter = m.group(1);
 		String nums = m.group(2);
